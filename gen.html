@@ -9,6 +9,50 @@
   </head>
 
   <body>
-    <script></script>
+    <pre id=src>
+    </pre>
+    <script>
+    let secret = window.location.hash.split("#")[1]
+    let pin = secret * 23
+    let hash = Math.floor(1299533 / (pin + secret*3)) * 49223 % 99991
+
+    src.innerHTML = `
+# Pin is ${pin}
+
+def hash(pin):
+    """ Compute a hash for a user PIN """
+    pin = pin + ${secret * 3}
+    pin = 1299533 // pin
+    pin = pin * 49223 % 99991
+    return pin
+
+def authenticate(pin):
+    try:
+        pin = int(pin)
+        if hash(pin) == ${hash}:
+            print("Authentication successful")
+            return True
+        else:
+            print("Authentication failure")
+            return False
+    except:
+        print("Error: Pin must be a number")
+        # Re-create error so user can see it
+        int(pin)
+
+pin = input("Enter access PIN number: ")
+
+if authenticate(pin) == False:
+    exit()
+
+# This confirms that you successfully discovered the auth
+# bypass. Your flag will be printed if you've done this correctly
+try:
+    hash(int(pin))
+except:
+    print("Auth bypass successful")
+    print("Your flag is", 7 * (int(pin) + 1023))
+`
+    </script>
   </body>
 </html>
